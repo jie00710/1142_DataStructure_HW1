@@ -22,6 +22,70 @@
                 "isDefault": true
             },
             "detail": "偵錯工具產生的工作。"
+        },
+        {
+            "type": "shell",
+            "label": "Compile HW1",
+            "command": "/bin/bash",
+            "args": [
+                "-lc",
+                "g++ HW1.cpp -o HW1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Run Calculator",
+            "command": "/bin/bash",
+            "args": [
+                "-lc",
+                "./HW1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Verify Calculator Scenarios",
+            "command": "/bin/bash",
+            "args": [
+                "-lc",
+                "chmod +x ./verify.sh && ./verify.sh"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
         }
     ],
     "version": "2.0.0"
