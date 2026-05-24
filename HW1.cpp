@@ -224,6 +224,7 @@ char encodeOperator(const string& token) {
     if (token == "(") return '(';
     if (token == ")") return ')';
     if (token == "=") return '=';
+    if (token == "u-" || token == "M") return 'M';
     if (token == "AND" || token == "and") return 'A';
     if (token == "OR" || token == "or") return 'O';
     if (token == "XOR" || token == "xor") return 'X';
@@ -237,7 +238,7 @@ char resolveTokenOperator(const string& token) {
     if (op != '\0') return op;
     if (token.size() == 1) {
         char ch = token[0];
-        if (ch == 'L' || ch == 'G' || ch == 'E' || ch == 'N' || ch == 'A' || ch == 'O' || ch == 'X' || ch == 'S' || ch == 'R') {
+        if (ch == 'L' || ch == 'G' || ch == 'E' || ch == 'N' || ch == 'A' || ch == 'O' || ch == 'X' || ch == 'S' || ch == 'R' || ch == 'M') {
             return ch;
         }
     }
@@ -247,6 +248,7 @@ char resolveTokenOperator(const string& token) {
 // 設定各種運算子的優先權
 int precedence(char op) {
     switch (op) {
+        case 'M':
         case '~':
         case '!':
             return 50;
@@ -525,6 +527,9 @@ void printStep(int& step, const string& label) {
     cout << "Step " << step++ << ": " << label << endl;
 }
 
+// 判斷某個 token 是否為一元運算子
+bool isUnaryToken(const string& token, const vector<string>& tokens, size_t index);
+
 // 將infix expression切成 token
 bool tokenize(const string& infix, vector<string>& tokens) {
     size_t i = 0;
@@ -570,7 +575,11 @@ bool tokenize(const string& infix, vector<string>& tokens) {
         }
 
         if (isOperatorChar(infix[i])) {
-            tokens.push_back(string(1, infix[i]));
+            if (infix[i] == '-' && isUnaryToken("-", tokens, tokens.size())) {
+                tokens.push_back("u-");
+            } else {
+                tokens.push_back(string(1, infix[i]));
+            }
             ++i;
             continue;
         }
@@ -636,7 +645,7 @@ bool isUnaryToken(const string& token, const vector<string>& tokens, size_t inde
     if (index == 0) return true;
     const string& prev = tokens[index - 1];
     char prevOp = encodeOperator(prev);
-    return prevOp == '\0' || prevOp == '(' || isOperator(prevOp);
+    return prevOp == '(' || isOperator(prevOp);
 }
 
 // 依照postfix計算並輸出每一步驟
@@ -730,6 +739,16 @@ void evaluatePostfix(const string& postfix, bool bitwiseMode, int& step) {
                 printStep(step, "~ " + to_string(static_cast<long long>(resolveNumericValue(operand, variables))) + " = " + formatBitResult(result, operandWidth));
                 pushValue(makeNumber(static_cast<double>(result), operandWidth));
             }
+            continue;
+        }
+
+        if (op == 'M') {
+            EvalValue operand = popValue();
+            double operandValue = resolveNumericValue(operand, variables);
+            int operandWidth = resolveBitWidth(operand, variables);
+            double result = -operandValue;
+            printStep(step, "- " + formatValue(operand, variables) + " = " + to_string(result));
+            pushValue(makeNumber(result, operandWidth));
             continue;
         }
 
