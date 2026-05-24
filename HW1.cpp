@@ -520,12 +520,12 @@ double applyUnaryLogic(char op, double operand) {
     return 0.0;
 }
 
-// 印出目前評估步驟
+// 印出目前步驟
 void printStep(int& step, const string& label) {
     cout << "Step " << step++ << ": " << label << endl;
 }
 
-// 將中綴表示式切成 token
+// 將infix expression切成 token
 bool tokenize(const string& infix, vector<string>& tokens) {
     size_t i = 0;
     while (i < infix.size()) {
@@ -582,7 +582,7 @@ bool tokenize(const string& infix, vector<string>& tokens) {
     return true;
 }
 
-// 將中綴表示式轉成後綴表示式
+// 將infix轉成postfix
 void convertToPostfix(const vector<string>& tokens, string& postfix) {
     Stack operators;
     postfix.clear();
@@ -639,7 +639,7 @@ bool isUnaryToken(const string& token, const vector<string>& tokens, size_t inde
     return prevOp == '\0' || prevOp == '(' || isOperator(prevOp);
 }
 
-// 依照後綴表示式計算並輸出每一步驟
+// 依照postfix計算並輸出每一步驟
 void evaluatePostfix(const string& postfix, bool bitwiseMode, int& step) {
     vector<EvalValue> values;
     stringstream ss(postfix);
@@ -803,7 +803,7 @@ void evaluatePostfix(const string& postfix, bool bitwiseMode, int& step) {
     }
 }
 
-// 處理使用者選擇的模式，包含輸入、轉換、評估與輸出
+// 處理使用者選擇的模式，包含輸入、轉換、判斷與輸出
 bool processMode(int mode) {
     string infix;
     cout << "\nMode " << mode << " - enter expression (type /0 to return to menu): ";
@@ -847,6 +847,7 @@ bool processMode(int mode) {
 // 程式主迴圈，顯示選單並根據使用者選擇執行對應模式
 int main() {
     while (true) {
+        //功能選擇
         cout << "\n===== Calculator Menu =====" << endl;
         cout << "1. Basic arithmetic + logical judgment" << endl;
         cout << "2. Bitwise operations" << endl;
